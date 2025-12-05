@@ -3,7 +3,9 @@ const user = require("../Model/userModel")
 
 const getUser = async(req,res) =>{
  try {
-    const User = await user.findById(req.user._id);
+    const User = await user.findById(req.user._id).select(
+      "-password -friend -reject -rejectedUsers -updatedAt -friends -createdAt -requested -ignore"
+    );
 
     if (!User) {
       return res.status(404).json({ message: "User not found" });
@@ -28,6 +30,7 @@ const updateProfile = async (req, res) => {
   
     try {
     const {
+      name,
       username,
       email,
       phone,
@@ -38,6 +41,7 @@ const updateProfile = async (req, res) => {
     } = req.body;
 
     if (
+      name,
       !username ||
       !email ||
       !phone ||
@@ -67,5 +71,29 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const deleteProfile = async (req, res) => {
+  
+    try {
+  
 
-module.exports = { getUser , updateProfile };
+    await user.findByIdAndUpdate((req.user._id),{
+      isdeltete: true
+    });
+
+  //   await res.cookie("jwtToken", "", {
+  //   httpOnly: true,
+  //   secure: false,
+  //   sameSite: "lax",
+  //   expires: new Date(0),
+  // });
+
+    return res.status(201).json({
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+};
+
+
+module.exports = { getUser , updateProfile , deleteProfile };

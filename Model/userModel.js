@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+   name: { 
+    type: String,
+    required: true
+  },
+
   username: { 
     type: String,
     required: true,
@@ -79,7 +84,12 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     }
-  ]
+  ],
+
+  isdeltete: {
+    type: Boolean,
+    default: false
+  }
 
 }, { timestamps: true });
 

@@ -22,7 +22,7 @@ const rejectUser = async (req, res) => {
 
     connection.status = "rejected";
     await connection.save();
-
+    
     const from = connection.from;
     const to = connection.to;
 

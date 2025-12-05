@@ -11,6 +11,7 @@ const generateToken = (id) => {
 const registerUser = async (req, res) => {
   try {
     const {
+      name,
       username,
       password,
       email,
@@ -22,6 +23,7 @@ const registerUser = async (req, res) => {
     } = req.body;
 
     if (
+      !name ||
       !username ||
       !password ||
       !email ||
@@ -42,6 +44,7 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
+      name,
       username,
       password: hashedPassword,
       email,
@@ -51,7 +54,7 @@ const registerUser = async (req, res) => {
       gender,
       address,
     });
-
+    
     return res.status(201).json({
       message: "User registered successfully",
       userId: user._id,
@@ -70,8 +73,14 @@ const loginUser = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
+
+
     if (!user) {
       return res.status(400).json("User not found");
+    }
+
+    if(user.isdeltete === true){
+      return res.status(400).json('User not found');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -85,8 +94,8 @@ const loginUser = async (req, res) => {
     
     res.cookie("jwtToken", token, {
       httpOnly: true,
-      secure: false, 
-      sameSite: "lax",
+      secure: true, 
+      sameSite: "none",
       maxAge: 3600000,
     });
 
